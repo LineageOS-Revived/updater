@@ -44,7 +44,7 @@ To run the server stand-alone you can use the included `docker-compose` script t
 
 ### Setup
 1. Place your builds in `./nginx/builds/`. These will be exposed on http://example.com/builds when you start the server. They don't need to be android builds, just make sure they have differing sha256s and match the filename format foobar-VERSION-BUILDDATE-BUILDTYPE-DEVICE-foobar.zip.
-2. Run `python gen_mirror_json.py ./nginx/builds > ./nginx/builds.json`
+2. Run `python3 gen_mirror_json.py ./nginx/builds > ./nginx/builds.json`
 3. Make sure you have device_deps.json, devices.json, and optional devices_local.json in the root directory of this repo.
 4. Install `docker-compose` on your system.
 5. Make sure that `docker-compose.yml` and `./nginx/default.conf` use suitable hostnames for your setup (rather than "updater" and "nginx", you should use the address of the computer running docker).
