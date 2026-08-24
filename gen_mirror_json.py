@@ -35,6 +35,24 @@ def read_android_metadata(path, *keys):
 
     return ret
 
+def read_legacy_android_metadata(path, *keys):
+    ret = [None] * len(keys)
+
+    try:
+        with ZipFile(path) as f:
+            for line in f.read("system/build.prop").decode().splitlines():
+                if not (line.startswith("#") or len(line) == 0):
+                    key, value = line.split("=", maxsplit=1)
+
+                    if key in keys:
+                        ret[keys.index(key)] = value
+    except:
+        logging.warning(
+            f"Failed to read system/build.prop for {path}", exc_info=True
+        )
+
+    return ret
+
 
 for f in [os.path.join(dp, f) for dp, dn, fn in os.walk(FILE_BASE) for f in fn]:
     data = open(f, "rb")
@@ -57,6 +75,9 @@ for f in [os.path.join(dp, f) for dp, dn, fn in os.walk(FILE_BASE) for f in fn]:
         timestamp = int(mktime(datetime.strptime(builddate, "%Y%m%d").timetuple()))
     else:
         timestamp = int(timestamp)
+
+    if not os_sdk_level and not os_patch_level:
+        os_sdk_level, os_patch_level = read_legacy_android_metadata(f, "ro.build.version.sdk", "ro.build.version.security_patch")
 
     builds.setdefault(device, []).append(
         {
